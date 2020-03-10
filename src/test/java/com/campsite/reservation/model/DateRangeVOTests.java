@@ -104,5 +104,17 @@ public class DateRangeVOTests {
 				.minus(new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(10)));
 		assertTrue(case7.getFirst().get().equals(new DateRangeVO(now, now.plusDays(10))));
 		assertEquals(case7.getSecond(), Optional.empty());
+		
+		// The date range to substract is bigger and contains the other inside
+		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case8 = oneMonthRange
+				.minus(new DateRangeVO(now.minusDays(10), now.plusMonths(1).plusDays(10)));
+		assertEquals(case8.getFirst(), Optional.empty());
+		assertEquals(case8.getSecond(), Optional.empty());
+		
+		// The date range to substract the same as the other
+		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case9 = oneMonthRange
+				.minus(oneMonthRange);
+		assertEquals(case9.getFirst(), Optional.empty());
+		assertEquals(case9.getSecond(), Optional.empty());
 	}
 }

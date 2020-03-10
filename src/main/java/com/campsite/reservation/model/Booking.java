@@ -26,6 +26,11 @@ public class Booking {
 		this.dateRange = dateRange;
 	}
 
+	public Booking(@NotNull String id, @NotNull String email, @NotNull String fullname, @NotNull DateRangeVO dateRange) {
+		this(email, fullname, dateRange);
+		this.id = id;
+	}
+	
 	public static Booking from(Booking booking, DateRangeVO newDateRange) {
 		Booking newBooking = new Booking(booking.email, booking.fullname, newDateRange);
 		newBooking.id = booking.id;

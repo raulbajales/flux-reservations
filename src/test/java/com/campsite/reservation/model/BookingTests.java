@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class BookingTests {
 
 	@Test
-	public void testPreconditions() {
+	public void testInvalidBookingWhenDateRangeIsOpen() {
 		assertThrows(IllegalArgumentException.class,
 				() -> new Booking("email", "fullname", new DateRangeVO(LocalDate.now(), null)));
 	}

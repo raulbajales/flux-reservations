@@ -27,47 +27,48 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 		});
 	}
 
-	public Mono<AvailabilityVO> calculateAvailabilityExcluding(Booking booking, DateRangeVO inThisDateRange) {
-		return bookingRepository.findByDateRangeExcluding(inThisDateRange, booking.getId()).collectList()
-				.map(bookings -> {
-					return calculateFor(inThisDateRange, bookings);
-				});
+	protected Mono<AvailabilityVO> calculateAvailabilityExcluding(String bookingId, DateRangeVO inThisDateRange) {
+		return bookingRepository.findByDateRangeExcluding(inThisDateRange, bookingId).collectList().map(bookings -> {
+			return calculateFor(inThisDateRange, bookings);
+		});
 	}
 
 	@Override
 	public Mono<Boolean> isCreationAllowed(Booking booking) {
-		return calculateAvailability(booking.getDateRange()).flatMap(availability -> {
-			return checkBooking(booking, availability);
-		});
+		DateRangeVO dateRange = booking.getDateRange();
+		return calculateAvailability(dateRange)
+				.flatMap(availability -> isDateRangeInsideAvailability(dateRange, availability));
 	}
 
 	@Override
 	public Mono<Boolean> isModificationAllowed(Booking booking, DateRangeVO newDateRange) {
-		return calculateAvailabilityExcluding(booking, booking.getDateRange()).flatMap(availability -> {
-			return checkBooking(booking, availability);
-		});
-	}
-
-	private Mono<Boolean> checkBooking(Booking booking, AvailabilityVO availability) {
-		for (DateRangeVO d : availability.getDatesAvailable()) {
-			if (booking.getDateRange().isInsideRange(d))
-				return Mono.just(Boolean.TRUE);
-		}
-		return Mono.just(Boolean.FALSE);
+		return calculateAvailabilityExcluding(booking.getId(), newDateRange)
+				.flatMap(availability -> isDateRangeInsideAvailability(newDateRange, availability));
 	}
 
 	private AvailabilityVO calculateFor(DateRangeVO inThisDateRange, List<Booking> bookings) {
 		AvailabilityVO.Builder builder = AvailabilityVO.builder(inThisDateRange);
-		DateRangeVO dateRangeToProcess = inThisDateRange;
+		Optional<DateRangeVO> dateRangeToProcess = Optional.of(inThisDateRange);
 		for (Booking b : bookings) {
-			Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> pair = dateRangeToProcess.minus(b.getDateRange());
-			if (pair.getFirst() != null)
-				builder.addRange(pair.getFirst().get());
-			dateRangeToProcess = pair.getSecond().get();
+			if (dateRangeToProcess.isPresent()) {
+				Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> pair = dateRangeToProcess.get()
+						.minus(b.getDateRange());
+				if (pair.getFirst().isPresent())
+					builder.addRange(pair.getFirst().get());
+				dateRangeToProcess = pair.getSecond();
+			}
 		}
-		if (dateRangeToProcess != null)
-			builder.addRange(dateRangeToProcess);
+		if (dateRangeToProcess.isPresent())
+			builder.addRange(dateRangeToProcess.get());
 		return builder.build();
 	}
 
+	private Mono<Boolean> isDateRangeInsideAvailability(DateRangeVO dateRange, AvailabilityVO availability) {
+		if (availability.getDatesAvailable() != null)
+			for (DateRangeVO d : availability.getDatesAvailable()) {
+				if (dateRange.isInsideRange(d))
+					return Mono.just(Boolean.TRUE);
+			}
+		return Mono.just(Boolean.FALSE);
+	}
 }
