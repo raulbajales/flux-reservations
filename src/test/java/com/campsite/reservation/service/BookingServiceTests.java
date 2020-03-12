@@ -9,11 +9,14 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.util.TreeSet;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 
 import com.campsite.reservation.model.AvailabilityVO;
 import com.campsite.reservation.model.Booking;
@@ -23,14 +26,29 @@ import com.campsite.reservation.service.impl.BookingServiceImpl;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
+@TestPropertySource("classpath:test.properties")
 public class BookingServiceTests {
 
 	@Mock
 	AvailabilityService availabilityService;
 
+	@Autowired
+	Environment env;
+
 	@InjectMocks
 	@Autowired
 	BookingService service = new BookingServiceImpl();
+
+	Integer maxBookingDays;
+	Integer minDaysAhead;
+	Integer maxDaysAhead;
+
+	@BeforeEach
+	public void beforeEach() {
+		maxBookingDays = env.getProperty("reservation.max-booking-days", Integer.class);
+		minDaysAhead = env.getProperty("reservation.min-days-ahead", Integer.class);
+		maxDaysAhead = env.getProperty("reservation.max-days-ahead", Integer.class);
+	}
 
 	@SuppressWarnings("serial")
 	@Test
@@ -40,7 +58,7 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
@@ -68,12 +86,12 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
-						add(new DateRangeVO(now.plusDays(1), now.plusDays(2)));
+						add(new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 2)));
 					}
 				}, dateRange)));
 
@@ -95,7 +113,7 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), dateRange)));
@@ -120,8 +138,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(3));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(10).plusDays(3));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10 + minDaysAhead), now.plusDays(10 + minDaysAhead + maxBookingDays));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
@@ -150,13 +168,13 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(3));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 1), now.plusDays(minDaysAhead + 1 + maxBookingDays));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
-						add(new DateRangeVO(now, now.plusDays(2)));
+						add(new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 2)));
 					}
 				}, newDateRange)));
 
@@ -179,8 +197,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(2));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(11));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(1 + minDaysAhead));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 10), now.plusDays(minDaysAhead + 11));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), newDateRange)));
@@ -203,7 +221,7 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(4));
+		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(maxBookingDays + 1));
 		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
@@ -222,8 +240,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(14));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 1));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(10 + maxBookingDays + 1));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
@@ -260,8 +278,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
-		DateRangeVO newDateRange = new DateRangeVO(now.minusDays(1), now.plusDays(1));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 2));
+		DateRangeVO newDateRange = new DateRangeVO(now.minusDays(1), now.plusDays(minDaysAhead + 1));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
@@ -279,7 +297,7 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead - 1), now.plusDays(minDaysAhead + 2));
 		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
@@ -298,8 +316,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
-		DateRangeVO newDateRange = new DateRangeVO(now, now.plusDays(1));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 1));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead - 1), now.plusDays(minDaysAhead + 2));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
@@ -317,7 +335,7 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(33));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1 + maxDaysAhead), now.plusDays(1 + maxDaysAhead + 1));
 		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
@@ -337,7 +355,7 @@ public class BookingServiceTests {
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(31), now.plusDays(33));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(1 + maxDaysAhead), now.plusDays(1 + maxDaysAhead + 1));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
