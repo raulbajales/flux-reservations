@@ -41,8 +41,8 @@ public class ReservationController {
 
 	@PostMapping
 	public Mono<ResponseEntity<URI>> makeReservation(@RequestBody Booking booking) {
-		return reservationService.makeReservation(booking).map(
-				bookingId -> ResponseEntity.created(URI.create(String.format("/reservations/%s", bookingId))).build());
+		return reservationService.makeReservation(booking).map(booked -> ResponseEntity
+				.created(URI.create(String.format("/reservations/%s", booked.getId()))).build());
 	}
 
 	@GetMapping("/{bookingId}")

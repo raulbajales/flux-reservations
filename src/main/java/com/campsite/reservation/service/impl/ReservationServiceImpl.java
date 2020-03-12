@@ -23,7 +23,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Autowired
 	AvailabilityService availabilityService;
-	
+
 	@Autowired
 	BookingRepository bookingRepository;
 
@@ -32,10 +32,10 @@ public class ReservationServiceImpl implements ReservationService {
 				: new DateRangeVO(dateRange.getFrom(), dateRange.getFrom().plusMonths(1)));
 	}
 
-	public Mono<String> makeReservation(@NotNull Booking booking) {
+	public Mono<Booking> makeReservation(@NotNull Booking booking) {
 		return bookingService.isBookingCreationAllowed(booking).flatMap(isAllowed -> {
 			if (isAllowed)
-				return bookingRepository.save(booking).map(Booking::getId);
+				return bookingRepository.save(booking);
 			else
 				throw new IllegalArgumentException("No availability");
 		});

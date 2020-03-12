@@ -12,7 +12,7 @@ public interface ReservationService {
 
 	Mono<AvailabilityVO> findAvailability(@NotNull DateRangeVO dateRange);
 
-	Mono<String> makeReservation(@NotNull Booking booking);
+	Mono<Booking> makeReservation(@NotNull Booking booking);
 
 	Mono<Booking> modifyReservation(@NotNull String bookingId, @NotNull DateRangeVO newDateRange);
 

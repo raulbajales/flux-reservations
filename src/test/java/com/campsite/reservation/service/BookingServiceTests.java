@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +60,8 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
+				now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
@@ -89,7 +89,8 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
+				now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
@@ -116,7 +117,8 @@ public class BookingServiceTests {
 		// Given
 		//
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
+				now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), dateRange)));
@@ -141,8 +143,10 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10 + minDaysAhead), now.plusDays(10 + minDaysAhead + maxBookingDays));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
+				now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10 + minDaysAhead),
+				now.plusDays(10 + minDaysAhead + maxBookingDays));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
@@ -171,8 +175,10 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + maxBookingDays));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 1), now.plusDays(minDaysAhead + 1 + maxBookingDays));
+		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
+				now.plusDays(minDaysAhead + maxBookingDays));
+		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 1),
+				now.plusDays(minDaysAhead + 1 + maxBookingDays));
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
