@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
@@ -29,14 +31,14 @@ import reactor.core.publisher.Mono;
 @TestPropertySource("classpath:test.properties")
 public class BookingServiceTests {
 
+	@Autowired
+	Environment env;
+
 	@Mock
 	AvailabilityService availabilityService;
 
 	@Autowired
-	Environment env;
-
 	@InjectMocks
-	@Autowired
 	BookingService service = new BookingServiceImpl();
 
 	Integer maxBookingDays;
@@ -45,6 +47,7 @@ public class BookingServiceTests {
 
 	@BeforeEach
 	public void beforeEach() {
+		MockitoAnnotations.initMocks(this);
 		maxBookingDays = env.getProperty("reservation.max-booking-days", Integer.class);
 		minDaysAhead = env.getProperty("reservation.min-days-ahead", Integer.class);
 		maxDaysAhead = env.getProperty("reservation.max-days-ahead", Integer.class);
