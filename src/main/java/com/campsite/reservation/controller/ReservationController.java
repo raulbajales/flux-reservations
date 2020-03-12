@@ -4,6 +4,7 @@ import java.net.URI;
 import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,12 +32,14 @@ public class ReservationController {
 
 	@GetMapping
 	public Mono<ResponseEntity<AvailabilityVO>> findAvailability(
-			@RequestParam(value = "from", required = false) LocalDate from,
-			@RequestParam(value = "to", required = false) LocalDate to) {
-		return reservationService
-				.findAvailability(new DateRangeVO(from != null ? from : LocalDate.now(),
-						to != null ? to : LocalDate.now().plusMonths(1)))
-				.map(availability -> ResponseEntity.ok(availability)).defaultIfEmpty(ResponseEntity.notFound().build());
+			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
+			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
+		if (from == null)
+			from = LocalDate.now();
+		if (to == null)
+			to = from.plusMonths(1);
+		return reservationService.findAvailability(new DateRangeVO(from, to))
+				.map(availability -> ResponseEntity.ok(availability));
 	}
 
 	@PostMapping

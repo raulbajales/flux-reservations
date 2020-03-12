@@ -31,6 +31,22 @@ public class AvailabilityVO {
 	public static AvailabilityVO.Builder builder(@NotNull DateRangeVO dateRange) {
 		return new AvailabilityVO.Builder(dateRange);
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[inThisDateRange: %s, datesAvailable: %s]", inThisDateRange, datesAvailable);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		AvailabilityVO vo = (AvailabilityVO) obj;
+		boolean cond1 = this.inThisDateRange.equals(vo.getInThisDateRange());
+		boolean cond2 = (this.datesAvailable == null && vo.getDatesAvailable() == null)
+				|| (this.datesAvailable.isEmpty() && vo.getDatesAvailable().isEmpty())
+				|| (this.datesAvailable.containsAll(vo.getDatesAvailable())
+						&& vo.getDatesAvailable().containsAll(this.datesAvailable));
+		return cond1 && cond2;
+	}
 
 	public static class Builder {
 

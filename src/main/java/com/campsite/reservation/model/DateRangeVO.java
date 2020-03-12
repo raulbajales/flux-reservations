@@ -83,7 +83,11 @@ public class DateRangeVO implements Comparable<DateRangeVO> {
 	@Override
 	public boolean equals(Object obj) {
 		DateRangeVO vo = (DateRangeVO) obj;
-		return this.getFrom().isEqual(vo.getFrom()) && this.getTo().isEqual(vo.getTo());
+		Boolean cond1 = ((this.getFrom() != null && vo.getFrom() != null && this.getFrom().isEqual(vo.getFrom()))
+				|| (this.getFrom() == null && vo.getFrom() == null));
+		Boolean cond2 = ((this.getTo() != null && vo.getTo() != null && this.getTo().isEqual(vo.getTo()))
+				|| (this.getTo() == null && vo.getTo() == null));
+		return cond1 && cond2;
 	}
 
 	@Override
