@@ -25,7 +25,7 @@ public class Booking {
 		this.fullname = fullname;
 		this.dateRange = dateRange;
 	}
-
+	
 	public Booking(@NotNull String id, @NotNull String email, @NotNull String fullname, @NotNull DateRangeVO dateRange) {
 		this(email, fullname, dateRange);
 		this.id = id;

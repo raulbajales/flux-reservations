@@ -1,7 +1,6 @@
-package com.campsite.reservation;
+package com.campsite.reservation.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
@@ -19,8 +18,7 @@ import com.campsite.reservation.model.AvailabilityVO;
 import com.campsite.reservation.model.Booking;
 import com.campsite.reservation.model.DateRangeVO;
 import com.campsite.reservation.repository.BookingRepository;
-import com.campsite.reservation.service.AvailabilityService;
-import com.campsite.reservation.service.AvailabilityServiceImpl;
+import com.campsite.reservation.service.impl.AvailabilityServiceImpl;
 
 import reactor.core.publisher.Flux;
 
@@ -146,158 +144,5 @@ public class AvailabilityServiceTests {
 		assertTrue(availability.getInThisDateRange().equals(dateRange));
 		assertNotNull(availability.getDatesAvailable());
 		assertEquals(availability.getDatesAvailable().size(), 0);
-	}
-
-	@Test
-	public void testIsCreationAllowed_fullAvailability() {
-
-		//
-		// Given
-		//
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		when(bookingRepository.findByDateRange(eq(dateRange)))
-				.thenReturn(Flux.<Booking>create(emitter -> emitter.complete()));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service.isCreationAllowed(new Booking("email", "fullName", dateRange)).block();
-
-		//
-		// Then
-		//
-		assertTrue(isAllowed);
-	}
-
-	@Test
-	public void testIsCreationAllowed_someBookings_someAvailability() {
-
-		//
-		// Given
-		//
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		when(bookingRepository.findByDateRange(eq(dateRange))).thenReturn(Flux.<Booking>create(emitter -> {
-			emitter.next(
-					new Booking("email", "fullname", new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(5))));
-			emitter.complete();
-		}));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service.isCreationAllowed(new Booking("email", "fullName", dateRange)).block();
-
-		//
-		// Then
-		//
-		assertFalse(isAllowed);
-	}
-
-	@Test
-	public void testIsCreationAllowed_allBooked_noAvailability() {
-
-		//
-		// Given
-		//
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		when(bookingRepository.findByDateRange(eq(dateRange))).thenReturn(Flux.<Booking>create(emitter -> {
-			emitter.next(new Booking("email", "fullname", dateRange));
-			emitter.complete();
-		}));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service.isCreationAllowed(new Booking("email", "fullName", dateRange)).block();
-
-		//
-		// Then
-		//
-		assertFalse(isAllowed);
-	}
-
-	@Test
-	public void testIsModificatinAllowed_fullAvailability() {
-
-		//
-		// Given
-		//
-		String bookingId = "someBookingId";
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(10));
-		when(bookingRepository.findByDateRangeExcluding(eq(newDateRange), eq(bookingId)))
-				.thenReturn(Flux.<Booking>create(emitter -> emitter.complete()));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service
-				.isModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange).block();
-
-		//
-		// Then
-		//
-		assertTrue(isAllowed);
-	}
-
-	@Test
-	public void testIsModificatinAllowed_someBookings_someAvailability() {
-
-		//
-		// Given
-		//
-		String bookingId = "someBookingId";
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(10));
-		when(bookingRepository.findByDateRangeExcluding(eq(newDateRange), eq(bookingId)))
-				.thenReturn(Flux.<Booking>create(emitter -> {
-					emitter.next(
-							new Booking("email", "fullname", new DateRangeVO(now.plusDays(10), now.plusMonths(2))));
-					emitter.complete();
-				}));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service
-				.isModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange).block();
-
-		//
-		// Then
-		//
-		assertFalse(isAllowed);
-	}
-
-	@Test
-	public void testIsModificatinAllowed_allBooked_noAvailability() {
-
-		//
-		// Given
-		//
-		String bookingId = "someBookingId";
-		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
-		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(10));
-		when(bookingRepository.findByDateRangeExcluding(eq(newDateRange), eq(bookingId)))
-				.thenReturn(Flux.<Booking>create(emitter -> {
-					emitter.next(new Booking("email", "fullname", newDateRange));
-					emitter.complete();
-				}));
-
-		//
-		// When
-		//
-		Boolean isAllowed = service
-				.isModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange).block();
-
-		//
-		// Then
-		//
-		assertFalse(isAllowed);
 	}
 }

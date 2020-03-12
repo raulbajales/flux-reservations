@@ -35,6 +35,13 @@ public class DateRangeVOTests {
 		assertTrue(new DateRangeVO(now, null).isOpen(), "isOpen must be true when to is null");
 		assertFalse(new DateRangeVO(now, now.plusDays(1)).isOpen(), "isOpen must be false when to is not null");
 	}
+	
+	@Test
+	public void testTotalDays() {
+		LocalDate now = LocalDate.now();
+		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(10));
+		assertEquals(dateRange.totalDays(), 10);
+	}
 
 	@Test
 	public void testIsInsideRange() {

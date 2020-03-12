@@ -3,6 +3,8 @@ package com.campsite.reservation.model;
 import java.time.LocalDate;
 import java.util.TreeSet;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.util.Assert;
 
 public class AvailabilityVO {
@@ -26,7 +28,7 @@ public class AvailabilityVO {
 		return datesAvailable;
 	}
 
-	public static AvailabilityVO.Builder builder(DateRangeVO dateRange) {
+	public static AvailabilityVO.Builder builder(@NotNull DateRangeVO dateRange) {
 		return new AvailabilityVO.Builder(dateRange);
 	}
 
@@ -40,11 +42,11 @@ public class AvailabilityVO {
 			this.availability.inThisDateRange = dateRange;
 		}
 
-		public void addRange(LocalDate from, LocalDate to) {
+		public void addRange(@NotNull LocalDate from, @NotNull LocalDate to) {
 			addRange(new DateRangeVO(from, to));
 		}
 
-		public Builder addRange(DateRangeVO dateRange) {
+		public Builder addRange(@NotNull DateRangeVO dateRange) {
 			Assert.isTrue(dateRange.isInsideRange(this.availability.inThisDateRange),
 					String.format("Cannot add date range %s because it's out of availability range %s", dateRange,
 							this.availability.inThisDateRange));

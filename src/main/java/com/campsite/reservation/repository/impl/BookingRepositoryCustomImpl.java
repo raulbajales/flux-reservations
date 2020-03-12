@@ -1,4 +1,4 @@
-package com.campsite.reservation.repository;
+package com.campsite.reservation.repository.impl;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 
 import com.campsite.reservation.model.Booking;
 import com.campsite.reservation.model.DateRangeVO;
+import com.campsite.reservation.repository.BookingRepositoryCustom;
 
 import reactor.core.publisher.Flux;
 

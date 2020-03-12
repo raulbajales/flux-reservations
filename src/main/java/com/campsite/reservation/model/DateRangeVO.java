@@ -1,6 +1,7 @@
 package com.campsite.reservation.model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import org.springframework.data.util.Pair;
@@ -42,6 +43,11 @@ public class DateRangeVO implements Comparable<DateRangeVO> {
 	public Boolean isOpen() {
 		return this.to == null;
 	}
+	
+	public long totalDays() {
+		return ChronoUnit.DAYS.between(this.from, this.to);
+	}	
+
 
 	/**
 	 * Checks if this DateRange instance is inside DateRange argument,
@@ -49,7 +55,7 @@ public class DateRangeVO implements Comparable<DateRangeVO> {
 	 */
 	public boolean isInsideRange(DateRangeVO inThisDateRange) {
 		return (this.from.isEqual(inThisDateRange.from) || this.from.isAfter(inThisDateRange.from))
-				&& (inThisDateRange.to == null
+				&& (inThisDateRange.isOpen()
 						|| (this.to.isEqual(inThisDateRange.to) || this.to.isBefore(inThisDateRange.to)));
 	}
 
