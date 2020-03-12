@@ -1,0 +1,15 @@
+{"properties": [{
+  "name": "reservation.max-booking-days",
+  "type": "java.lang.Integer",
+  "description": "Max numbers of days for a booking"
+},
+{
+  "name": "reservation.min-days-ahead",
+  "type": "java.lang.Integer",
+  "description": "Min days ahead for a booking"
+},
+{
+  "name": "reservation.max-days-ahead",
+  "type": "java.lang.Integer",
+  "description": "Max days ahead for a booking"
+}]}

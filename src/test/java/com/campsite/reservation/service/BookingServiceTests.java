@@ -1,8 +1,8 @@
 package com.campsite.reservation.service;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.campsite.reservation.model.AvailabilityVO;
@@ -28,6 +29,7 @@ public class BookingServiceTests {
 	AvailabilityService availabilityService;
 
 	@InjectMocks
+	@Autowired
 	BookingService service = new BookingServiceImpl();
 
 	@SuppressWarnings("serial")
@@ -39,16 +41,18 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
+		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
 						add(dateRange);
 					}
 				}, dateRange)));
+
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+		Boolean isAllowed = service.isBookingCreationAllowed(booking).block();
 
 		//
 		// Then
@@ -65,6 +69,7 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
@@ -75,7 +80,7 @@ public class BookingServiceTests {
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+		Boolean isAllowed = service.isBookingCreationAllowed(booking).block();
 
 		//
 		// Then
@@ -91,13 +96,14 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		Booking booking = new Booking("email", "fullName", dateRange);
 		when(availabilityService.calculateAvailability(eq(dateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), dateRange)));
 
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+		Boolean isAllowed = service.isBookingCreationAllowed(booking).block();
 
 		//
 		// Then
@@ -116,6 +122,7 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(3));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(10).plusDays(3));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
@@ -126,9 +133,7 @@ public class BookingServiceTests {
 		//
 		// When
 		//
-		Boolean isAllowed = service
-				.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-				.block();
+		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
 
 		//
 		// Then
@@ -147,6 +152,7 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(3));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(1), now.plusDays(4));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
@@ -157,9 +163,7 @@ public class BookingServiceTests {
 		//
 		// When
 		//
-		Boolean isAllowed = service
-				.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-				.block();
+		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
 
 		//
 		// Then
@@ -177,15 +181,14 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(2));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(11));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), newDateRange)));
 
 		//
 		// When
 		//
-		Boolean isAllowed = service
-				.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-				.block();
+		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
 
 		//
 		// Then
@@ -201,12 +204,13 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(4));
+		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+			service.isBookingCreationAllowed(booking).block();
 		});
 	}
 
@@ -220,16 +224,16 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(14));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-					.block();
+			service.isBookingModificationAllowed(booking, newDateRange).block();
 		});
 	}
-	
+
 	@Test
 	public void testIsBookingCreationAllowed_cannotBookInThePast() {
 
@@ -238,12 +242,13 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.minusDays(1), now.plusDays(1));
+		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+			service.isBookingCreationAllowed(booking).block();
 		});
 	}
 
@@ -257,13 +262,13 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
 		DateRangeVO newDateRange = new DateRangeVO(now.minusDays(1), now.plusDays(1));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-					.block();
+			service.isBookingModificationAllowed(booking, newDateRange).block();
 		});
 	}
 
@@ -275,12 +280,13 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now, now.plusDays(1));
+		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+			service.isBookingCreationAllowed(booking).block();
 		});
 	}
 
@@ -294,13 +300,13 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
 		DateRangeVO newDateRange = new DateRangeVO(now, now.plusDays(1));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-					.block();
+			service.isBookingModificationAllowed(booking, newDateRange).block();
 		});
 	}
 
@@ -312,12 +318,13 @@ public class BookingServiceTests {
 		//
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(33));
+		Booking booking = new Booking("email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingCreationAllowed(new Booking("email", "fullName", dateRange)).block();
+			service.isBookingCreationAllowed(booking).block();
 		});
 	}
 
@@ -331,14 +338,13 @@ public class BookingServiceTests {
 		LocalDate now = LocalDate.now();
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(31), now.plusDays(33));
+		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(new Booking(bookingId, "email", "fullName", dateRange), newDateRange)
-					.block();
+			service.isBookingModificationAllowed(booking, newDateRange).block();
 		});
 	}
 }
-
