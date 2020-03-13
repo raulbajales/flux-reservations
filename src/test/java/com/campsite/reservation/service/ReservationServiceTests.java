@@ -171,7 +171,7 @@ public class ReservationServiceTests {
 		//
 		verify(bookingRepository).findById(bookingId);
 		verify(bookingService).isBookingModificationAllowed(booking, newDateRange);
-		verify(bookingRepository).save(booking);
+		verify(bookingRepository).save(newBooking);
 	}
 
 	@Test

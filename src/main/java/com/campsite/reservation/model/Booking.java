@@ -52,4 +52,19 @@ public class Booking {
 	public DateRangeVO getDateRange() {
 		return dateRange;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("[id: %s, email: %s, fullName: %s, dateRange: %s]", this.id, this.email, this.fullname,
+				this.dateRange);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		Booking other = (Booking) obj;
+		return (this.id != null ? this.id.equals(other.getId()) : other.getId() == null) &&
+				this.email.equals(other.getEmail()) &&
+				this.fullname.equals(other.getFullname()) &&
+				this.dateRange.equals(other.getDateRange());
+	}
 }
