@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.springframework.data.util.Pair;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class DateRangeVO implements Comparable<DateRangeVO> {
 
 	private LocalDate from;
@@ -40,14 +42,14 @@ public class DateRangeVO implements Comparable<DateRangeVO> {
 		return to;
 	}
 
+	@JsonIgnore
 	public Boolean isOpen() {
 		return this.to == null;
 	}
-	
+
 	public long totalDays() {
 		return ChronoUnit.DAYS.between(this.from, this.to);
-	}	
-
+	}
 
 	/**
 	 * Checks if this DateRange instance is inside DateRange argument,

@@ -1,9 +1,8 @@
 package com.campsite.reservation.service.impl;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.campsite.reservation.model.AvailabilityVO;
 import com.campsite.reservation.model.Booking;
@@ -27,12 +26,14 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	BookingRepository bookingRepository;
 
-	public Mono<AvailabilityVO> findAvailability(@NotNull DateRangeVO dateRange) {
+	public Mono<AvailabilityVO> findAvailability(DateRangeVO dateRange) {
+		Assert.notNull(dateRange, "dateRange needs to be set");
 		return availabilityService.calculateAvailability(!dateRange.isOpen() ? dateRange
 				: new DateRangeVO(dateRange.getFrom(), dateRange.getFrom().plusMonths(1)));
 	}
 
-	public Mono<Booking> makeReservation(@NotNull Booking booking) {
+	public Mono<Booking> makeReservation(Booking booking) {
+		Assert.notNull(booking, "booking needs to be set");
 		return bookingService.isBookingCreationAllowed(booking).flatMap(isAllowed -> {
 			if (isAllowed)
 				return bookingRepository.save(booking);
@@ -41,9 +42,12 @@ public class ReservationServiceImpl implements ReservationService {
 		});
 	}
 
-	public Mono<Booking> modifyReservation(@NotNull String bookingId, @NotNull DateRangeVO newDateRange) {
+	public Mono<Booking> modifyReservation(String bookingId, DateRangeVO newDateRange) {
+		Assert.notNull(bookingId, "bookingId needs to be set");
+		Assert.notNull(newDateRange, "newDateRange needs to be set");
+		Assert.isTrue(!newDateRange.isOpen(), "newDateRange cannot be open");
 		return bookingRepository.findById(bookingId).flatMap(booking -> {
-			return bookingService.isBookingModificationAllowed(booking, newDateRange).flatMap(isAllowed -> {
+			return bookingService.isBookingModificationAllowed(booking.getId(), newDateRange).flatMap(isAllowed -> {
 				if (isAllowed)
 					return bookingRepository.save(Booking.from(booking, newDateRange));
 				else
@@ -52,11 +56,13 @@ public class ReservationServiceImpl implements ReservationService {
 		});
 	}
 
-	public Mono<Booking> getReservationInfo(@NotNull String bookingId) {
+	public Mono<Booking> getReservationInfo(String bookingId) {
+		Assert.notNull(bookingId, "bookingId needs to be set");
 		return bookingRepository.findById(bookingId);
 	}
 
-	public Mono<Void> cancelReservation(@NotNull String bookingId) {
+	public Mono<Void> cancelReservation(String bookingId) {
+		Assert.notNull(bookingId, "bookingId needs to be set");
 		return bookingRepository.deleteById(bookingId);
 	}
 

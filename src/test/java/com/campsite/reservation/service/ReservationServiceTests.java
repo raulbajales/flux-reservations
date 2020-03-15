@@ -2,10 +2,10 @@ package com.campsite.reservation.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 
@@ -107,8 +107,8 @@ public class ReservationServiceTests {
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
 				now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("id", "email", "fullName", dateRange);
-		doReturn(Mono.<Boolean>just(Boolean.TRUE)).when(bookingService).isBookingCreationAllowed(eq(booking));
-		doReturn(Mono.<Booking>just(booking)).when(bookingRepository).save(eq(booking));
+		when(bookingService.isBookingCreationAllowed(eq(booking))).thenReturn(Mono.<Boolean>just(Boolean.TRUE));
+		when(bookingRepository.save(eq(booking))).thenReturn(Mono.<Booking>just(booking));
 
 		//
 		// When
@@ -132,7 +132,7 @@ public class ReservationServiceTests {
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
 				now.plusDays(minDaysAhead + maxBookingDays));
 		Booking booking = new Booking("id", "email", "fullName", dateRange);
-		doReturn(Mono.<Boolean>just(Boolean.FALSE)).when(bookingService).isBookingCreationAllowed(eq(booking));
+		when(bookingService.isBookingCreationAllowed(eq(booking))).thenReturn(Mono.<Boolean>just(Boolean.FALSE));
 
 		//
 		// When / Then
@@ -156,10 +156,10 @@ public class ReservationServiceTests {
 		String bookingId = "someBookingId";
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		Booking newBooking = Booking.from(booking, newDateRange);
-		doReturn(Mono.<Booking>just(booking)).when(bookingRepository).findById(eq(bookingId));
-		doReturn(Mono.<Boolean>just(Boolean.TRUE)).when(bookingService).isBookingModificationAllowed(eq(booking),
-				eq(newDateRange));
-		doReturn(Mono.<Booking>just(newBooking)).when(bookingRepository).save(eq(newBooking));
+		when(bookingRepository.findById(eq(bookingId))).thenReturn(Mono.<Booking>just(booking));
+		when(bookingService.isBookingModificationAllowed(eq(bookingId), eq(newDateRange)))
+				.thenReturn(Mono.<Boolean>just(Boolean.TRUE));
+		when(bookingRepository.save(eq(newBooking))).thenReturn(Mono.<Booking>just(newBooking));
 
 		//
 		// When
@@ -170,7 +170,7 @@ public class ReservationServiceTests {
 		// Then
 		//
 		verify(bookingRepository).findById(bookingId);
-		verify(bookingService).isBookingModificationAllowed(booking, newDateRange);
+		verify(bookingService).isBookingModificationAllowed(bookingId, newDateRange);
 		verify(bookingRepository).save(newBooking);
 	}
 
@@ -187,16 +187,16 @@ public class ReservationServiceTests {
 				now.plusDays(minDaysAhead + maxBookingDays + 5));
 		String bookingId = "someBookingId";
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
-		doReturn(Mono.<Booking>just(booking)).when(bookingRepository).findById(eq(bookingId));
-		doReturn(Mono.<Boolean>just(Boolean.FALSE)).when(bookingService).isBookingModificationAllowed(eq(booking),
-				eq(newDateRange));
+		when(bookingRepository.findById(eq(bookingId))).thenReturn(Mono.<Booking>just(booking));
+		when(bookingService.isBookingModificationAllowed(eq(bookingId), eq(newDateRange)))
+				.thenReturn(Mono.<Boolean>just(Boolean.FALSE));
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> service.modifyReservation(bookingId, newDateRange).block());
 		verify(bookingRepository).findById(bookingId);
-		verify(bookingService).isBookingModificationAllowed(booking, newDateRange);
+		verify(bookingService).isBookingModificationAllowed(bookingId, newDateRange);
 		verifyNoMoreInteractions(bookingRepository);
 	}
 
@@ -211,7 +211,7 @@ public class ReservationServiceTests {
 				now.plusDays(minDaysAhead + maxBookingDays));
 		String bookingId = "someBookingId";
 		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
-		doReturn(Mono.<Booking>just(booking)).when(bookingRepository).findById(eq(bookingId));
+		when(bookingRepository.findById(eq(bookingId))).thenReturn(Mono.<Booking>just(booking));
 
 		//
 		// When
@@ -231,7 +231,7 @@ public class ReservationServiceTests {
 		// Given
 		//
 		String bookingId = "someBookingId";
-		doReturn(Mono.<Void>empty()).when(bookingRepository).deleteById(eq(bookingId));
+		when(bookingRepository.deleteById(eq(bookingId))).thenReturn(Mono.<Void>empty());
 
 		//
 		// When

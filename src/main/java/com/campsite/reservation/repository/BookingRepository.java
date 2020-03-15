@@ -7,5 +7,5 @@ import com.campsite.reservation.model.Booking;
 
 @Repository
 public interface BookingRepository extends ReactiveMongoRepository<Booking, String>, BookingRepositoryCustom {
-	
+
 }

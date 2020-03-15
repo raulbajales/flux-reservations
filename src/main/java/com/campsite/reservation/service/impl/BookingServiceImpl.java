@@ -3,12 +3,11 @@ package com.campsite.reservation.service.impl;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.campsite.reservation.model.AvailabilityVO;
 import com.campsite.reservation.model.Booking;
@@ -29,7 +28,8 @@ public class BookingServiceImpl implements BookingService {
 	Environment env;
 
 	@Override
-	public Mono<Boolean> isBookingCreationAllowed(@NotNull Booking booking) {
+	public Mono<Boolean> isBookingCreationAllowed(Booking booking) {
+		Assert.notNull(booking, "booking needs to be set");
 		DateRangeVO dateRange = booking.getDateRange();
 		checkPreconditions(dateRange);
 		return availabilityService.calculateAvailability(dateRange)
@@ -37,9 +37,11 @@ public class BookingServiceImpl implements BookingService {
 	}
 
 	@Override
-	public Mono<Boolean> isBookingModificationAllowed(@NotNull Booking booking, @NotNull DateRangeVO newDateRange) {
+	public Mono<Boolean> isBookingModificationAllowed(String bookingId, DateRangeVO newDateRange) {
+		Assert.notNull(bookingId, "bookingId needs to be set");
+		Assert.notNull(newDateRange, "newDateRange needs to be set");
 		checkPreconditions(newDateRange);
-		return availabilityService.calculateAvailabilityExcluding(booking.getId(), newDateRange)
+		return availabilityService.calculateAvailabilityExcluding(bookingId, newDateRange)
 				.flatMap(availability -> isDateRangeInsideAvailability(newDateRange, availability));
 	}
 

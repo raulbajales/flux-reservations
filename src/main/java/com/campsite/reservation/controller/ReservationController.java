@@ -62,7 +62,6 @@ public class ReservationController {
 	@PutMapping("/{bookingId}")
 	public Mono<ResponseEntity<Booking>> modifyReservation(@PathVariable String bookingId,
 			@RequestBody DateRangeVO newDateRange) {
-		return reservationService.modifyReservation(bookingId, newDateRange).map(booking -> ResponseEntity.ok(booking))
-				.defaultIfEmpty(ResponseEntity.notFound().build());
+		return reservationService.modifyReservation(bookingId, newDateRange).map(booking -> ResponseEntity.ok(booking));
 	}
 }

@@ -3,8 +3,6 @@ package com.campsite.reservation.model;
 import java.time.LocalDate;
 import java.util.TreeSet;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.util.Assert;
 
 public class AvailabilityVO {
@@ -28,15 +26,16 @@ public class AvailabilityVO {
 		return datesAvailable;
 	}
 
-	public static AvailabilityVO.Builder builder(@NotNull DateRangeVO dateRange) {
+	public static AvailabilityVO.Builder builder(DateRangeVO dateRange) {
+		Assert.notNull(dateRange, "dateRange needs to be set");
 		return new AvailabilityVO.Builder(dateRange);
 	}
-	
+
 	@Override
 	public String toString() {
 		return String.format("[inThisDateRange: %s, datesAvailable: %s]", inThisDateRange, datesAvailable);
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		AvailabilityVO vo = (AvailabilityVO) obj;
@@ -52,17 +51,19 @@ public class AvailabilityVO {
 
 		private AvailabilityVO availability;
 
-		public Builder(DateRangeVO dateRange) {
+		private Builder(DateRangeVO dateRange) {
 			this.availability = new AvailabilityVO();
 			this.availability.datesAvailable = new TreeSet<DateRangeVO>();
 			this.availability.inThisDateRange = dateRange;
 		}
 
-		public void addRange(@NotNull LocalDate from, @NotNull LocalDate to) {
+		public void addRange(LocalDate from, LocalDate to) {
+			Assert.notNull(from, "from needs to be set");
 			addRange(new DateRangeVO(from, to));
 		}
 
-		public Builder addRange(@NotNull DateRangeVO dateRange) {
+		public Builder addRange(DateRangeVO dateRange) {
+			Assert.notNull(dateRange, "dateRange needs to be set");
 			Assert.isTrue(dateRange.isInsideRange(this.availability.inThisDateRange),
 					String.format("Cannot add date range %s because it's out of availability range %s", dateRange,
 							this.availability.inThisDateRange));

@@ -35,7 +35,7 @@ public class DateRangeVOTests {
 		assertTrue(new DateRangeVO(now, null).isOpen(), "isOpen must be true when to is null");
 		assertFalse(new DateRangeVO(now, now.plusDays(1)).isOpen(), "isOpen must be false when to is not null");
 	}
-	
+
 	@Test
 	public void testTotalDays() {
 		LocalDate now = LocalDate.now();
@@ -99,7 +99,7 @@ public class DateRangeVOTests {
 				.minus(new DateRangeVO(now.plusMonths(1), now.plusMonths(2)));
 		assertTrue(case5.getFirst().get().equals(oneMonthRange));
 		assertEquals(case5.getSecond(), Optional.empty());
-		
+
 		// The date range to substract is outside (in the past), but with part inside
 		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case6 = oneMonthRange
 				.minus(new DateRangeVO(now.minusMonths(1), now.plusDays(10)));
@@ -111,16 +111,15 @@ public class DateRangeVOTests {
 				.minus(new DateRangeVO(now.plusDays(10), now.plusMonths(1).plusDays(10)));
 		assertTrue(case7.getFirst().get().equals(new DateRangeVO(now, now.plusDays(10))));
 		assertEquals(case7.getSecond(), Optional.empty());
-		
+
 		// The date range to substract is bigger and contains the other inside
 		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case8 = oneMonthRange
 				.minus(new DateRangeVO(now.minusDays(10), now.plusMonths(1).plusDays(10)));
 		assertEquals(case8.getFirst(), Optional.empty());
 		assertEquals(case8.getSecond(), Optional.empty());
-		
+
 		// The date range to substract the same as the other
-		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case9 = oneMonthRange
-				.minus(oneMonthRange);
+		Pair<Optional<DateRangeVO>, Optional<DateRangeVO>> case9 = oneMonthRange.minus(oneMonthRange);
 		assertEquals(case9.getFirst(), Optional.empty());
 		assertEquals(case9.getSecond(), Optional.empty());
 	}

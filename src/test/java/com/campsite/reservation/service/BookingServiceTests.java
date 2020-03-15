@@ -143,11 +143,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
-				now.plusDays(minDaysAhead + maxBookingDays));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10 + minDaysAhead),
 				now.plusDays(10 + minDaysAhead + maxBookingDays));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
@@ -158,7 +155,7 @@ public class BookingServiceTests {
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
+		Boolean isAllowed = service.isBookingModificationAllowed(bookingId, newDateRange).block();
 
 		//
 		// Then
@@ -175,11 +172,8 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead),
-				now.plusDays(minDaysAhead + maxBookingDays));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 1),
 				now.plusDays(minDaysAhead + 1 + maxBookingDays));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 					{
@@ -190,7 +184,7 @@ public class BookingServiceTests {
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
+		Boolean isAllowed = service.isBookingModificationAllowed(bookingId, newDateRange).block();
 
 		//
 		// Then
@@ -206,16 +200,14 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(1 + minDaysAhead));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead + 10), now.plusDays(minDaysAhead + 11));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 		when(availabilityService.calculateAvailabilityExcluding(eq(bookingId), eq(newDateRange)))
 				.thenReturn(Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>(), newDateRange)));
 
 		//
 		// When
 		//
-		Boolean isAllowed = service.isBookingModificationAllowed(booking, newDateRange).block();
+		Boolean isAllowed = service.isBookingModificationAllowed(bookingId, newDateRange).block();
 
 		//
 		// Then
@@ -249,15 +241,13 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 1));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(10), now.plusDays(10 + maxBookingDays + 1));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(booking, newDateRange).block();
+			service.isBookingModificationAllowed(bookingId, newDateRange).block();
 		});
 	}
 
@@ -287,15 +277,13 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 2));
 		DateRangeVO newDateRange = new DateRangeVO(now.minusDays(1), now.plusDays(minDaysAhead + 1));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(booking, newDateRange).block();
+			service.isBookingModificationAllowed(bookingId, newDateRange).block();
 		});
 	}
 
@@ -325,15 +313,13 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(minDaysAhead), now.plusDays(minDaysAhead + 1));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(minDaysAhead - 1), now.plusDays(minDaysAhead + 2));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(booking, newDateRange).block();
+			service.isBookingModificationAllowed(bookingId, newDateRange).block();
 		});
 	}
 
@@ -363,15 +349,13 @@ public class BookingServiceTests {
 		//
 		String bookingId = "someBookingId";
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now.plusDays(1), now.plusDays(3));
 		DateRangeVO newDateRange = new DateRangeVO(now.plusDays(1 + maxDaysAhead), now.plusDays(1 + maxDaysAhead + 1));
-		Booking booking = new Booking(bookingId, "email", "fullName", dateRange);
 
 		//
 		// When / Then
 		//
 		assertThrows(IllegalArgumentException.class, () -> {
-			service.isBookingModificationAllowed(booking, newDateRange).block();
+			service.isBookingModificationAllowed(bookingId, newDateRange).block();
 		});
 	}
 }

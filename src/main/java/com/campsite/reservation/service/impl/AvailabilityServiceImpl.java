@@ -3,11 +3,10 @@ package com.campsite.reservation.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.constraints.NotNull;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import com.campsite.reservation.model.AvailabilityVO;
 import com.campsite.reservation.model.Booking;
@@ -24,15 +23,17 @@ public class AvailabilityServiceImpl implements AvailabilityService {
 	BookingRepository bookingRepository;
 
 	@Override
-	public Mono<AvailabilityVO> calculateAvailability(@NotNull DateRangeVO inThisDateRange) {
+	public Mono<AvailabilityVO> calculateAvailability(DateRangeVO inThisDateRange) {
+		Assert.notNull(inThisDateRange, "inThisDateRange needs to be set");
 		return bookingRepository.findByDateRange(inThisDateRange).collectList().map(bookings -> {
 			return calculateFor(inThisDateRange, bookings);
 		});
 	}
 
 	@Override
-	public Mono<AvailabilityVO> calculateAvailabilityExcluding(@NotNull String bookingId,
-			@NotNull DateRangeVO inThisDateRange) {
+	public Mono<AvailabilityVO> calculateAvailabilityExcluding(String bookingId, DateRangeVO inThisDateRange) {
+		Assert.notNull(bookingId, "bookingId needs to be set");
+		Assert.notNull(inThisDateRange, "inThisDateRange needs to be set");
 		return bookingRepository.findByDateRangeExcluding(inThisDateRange, bookingId).collectList().map(bookings -> {
 			return calculateFor(inThisDateRange, bookings);
 		});
