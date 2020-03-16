@@ -46,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService {
 		Assert.notNull(bookingId, "bookingId needs to be set");
 		Assert.notNull(newDateRange, "newDateRange needs to be set");
 		Assert.isTrue(!newDateRange.isOpen(), "newDateRange cannot be open");
-		return bookingRepository.findById(bookingId).flatMap(booking -> {
+		return bookingRepository.customFindById(bookingId).flatMap(booking -> {
 			return bookingService.isBookingModificationAllowed(booking.getId(), newDateRange).flatMap(isAllowed -> {
 				if (isAllowed)
 					return bookingRepository.save(Booking.from(booking, newDateRange));
@@ -58,12 +58,12 @@ public class ReservationServiceImpl implements ReservationService {
 
 	public Mono<Booking> getReservationInfo(String bookingId) {
 		Assert.notNull(bookingId, "bookingId needs to be set");
-		return bookingRepository.findById(bookingId);
+		return bookingRepository.customFindById(bookingId);
 	}
 
 	public Mono<Void> cancelReservation(String bookingId) {
 		Assert.notNull(bookingId, "bookingId needs to be set");
-		return bookingRepository.deleteById(bookingId);
+		return bookingRepository.customDeleteById(bookingId);
 	}
 
 }

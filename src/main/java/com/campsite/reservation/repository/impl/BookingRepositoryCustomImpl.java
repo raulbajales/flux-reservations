@@ -43,7 +43,7 @@ public class BookingRepositoryCustomImpl implements BookingRepositoryCustom {
 	}
 
 	@Override
-	public Mono<Void> deleteById(String bookingId) {
+	public Mono<Void> customDeleteById(String bookingId) {
 		Assert.notNull(bookingId, "The given id must not be null!");
 		return mongo.findOne(query(where("id").is(bookingId)), Booking.class)
 				.switchIfEmpty(Mono.error(new BookingNotFoundException(bookingId)))
@@ -51,7 +51,7 @@ public class BookingRepositoryCustomImpl implements BookingRepositoryCustom {
 	}
 
 	@Override
-	public Mono<Booking> findById(String bookingId) {
+	public Mono<Booking> customFindById(String bookingId) {
 		Assert.notNull(bookingId, "The given id must not be null!");
 		return mongo.findOne(query(where("id").is(bookingId)), Booking.class)
 				.switchIfEmpty(Mono.error(new BookingNotFoundException(bookingId)));

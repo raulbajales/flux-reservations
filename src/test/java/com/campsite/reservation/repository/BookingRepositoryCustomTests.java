@@ -135,7 +135,7 @@ public class BookingRepositoryCustomTests {
 		//
 		// When
 		//
-		repository.deleteById(bookingIdToDelete).block();
+		repository.customDeleteById(bookingIdToDelete).block();
 
 		//
 		// Then
@@ -163,7 +163,7 @@ public class BookingRepositoryCustomTests {
 		//
 		// When / Then
 		//
-		assertThrows(BookingNotFoundException.class, () -> repository.deleteById(nonExistentBookingId).block());
+		assertThrows(BookingNotFoundException.class, () -> repository.customDeleteById(nonExistentBookingId).block());
 	}
 
 	@SuppressWarnings("serial")
@@ -189,7 +189,7 @@ public class BookingRepositoryCustomTests {
 		//
 		// When
 		//
-		Booking booking = repository.findById(bookingIdToGet).block();
+		Booking booking = repository.customFindById(bookingIdToGet).block();
 
 		//
 		// Then
@@ -211,6 +211,6 @@ public class BookingRepositoryCustomTests {
 		//
 		// When / Then
 		//
-		assertThrows(BookingNotFoundException.class, () -> repository.findById(nonExistentBookingId).block());
+		assertThrows(BookingNotFoundException.class, () -> repository.customFindById(nonExistentBookingId).block());
 	}
 }

@@ -22,12 +22,12 @@ public interface BookingRepositoryCustom {
 	Flux<Booking> findByDateRangeExcluding(DateRangeVO dateRange, String bookingId);
 
 	/**
-	 * Need a custom implementation to eventually throw BookingNotFoundException.
+	 * Need a custom implementation for deleteById to eventually throw BookingNotFoundException.
 	 */
-	Mono<Void> deleteById(String bookingId);
+	Mono<Void> customDeleteById(String bookingId);
 
 	/**
-	 * Need a custom implementation to eventually throw BookingNotFoundException.
+	 * Need a custom implementation findById to eventually throw BookingNotFoundException.
 	 */
-	Mono<Booking> findById(String bookingId);
+	Mono<Booking> customFindById(String bookingId);
 }
