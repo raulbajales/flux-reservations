@@ -42,35 +42,35 @@ public class ReservationController {
 			from = LocalDate.now();
 		if (to == null)
 			to = from.plusMonths(1);
-		LOG.debug("findAvailability from: %s, to: %s", from, to);
+		LOG.info("findAvailability from: {}, to: {}", from, to);
 		return reservationService.findAvailability(new DateRangeVO(from, to))
 				.map(availability -> ResponseEntity.ok(availability));
 	}
 
 	@PostMapping
 	public Mono<ResponseEntity<Void>> makeReservation(@RequestBody Booking booking) {
-		LOG.debug("makeReservation booking: %s", booking);
+		LOG.info("makeReservation booking: {}", booking);
 		return reservationService.makeReservation(booking).map(booked -> ResponseEntity
 				.created(URI.create(String.format("/reservations/%s", booked.getId()))).build());
 	}
 
 	@GetMapping("/{bookingId}")
 	public Mono<ResponseEntity<Booking>> getReservationInfo(@PathVariable String bookingId) {
-		LOG.debug("getReservationInfo bookingId: %s", bookingId);
+		LOG.info("getReservationInfo bookingId: {}", bookingId);
 		return reservationService.getReservationInfo(bookingId).map(booking -> ResponseEntity.ok(booking))
 				.defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 
 	@DeleteMapping("/{bookingId}")
 	public Mono<ResponseEntity<Void>> cancelReservation(@PathVariable String bookingId) {
-		LOG.debug("cancelReservation bookingId: %s", bookingId);
+		LOG.debug("cancelReservation bookingId: {}", bookingId);
 		return reservationService.cancelReservation(bookingId).then(Mono.just(ResponseEntity.ok().<Void>build()));
 	}
 
 	@PutMapping("/{bookingId}")
 	public Mono<ResponseEntity<Booking>> modifyReservation(@PathVariable String bookingId,
 			@RequestBody DateRangeVO newDateRange) {
-		LOG.debug("modifyReservation bookingId: %s, newDateRange: %s", bookingId, newDateRange);
+		LOG.info("modifyReservation bookingId: {}, newDateRange: {}", bookingId, newDateRange);
 		return reservationService.modifyReservation(bookingId, newDateRange).map(booking -> ResponseEntity.ok(booking));
 	}
 }
