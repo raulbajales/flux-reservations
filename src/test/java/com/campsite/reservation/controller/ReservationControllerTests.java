@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -27,7 +29,11 @@ import reactor.core.publisher.Mono;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = ReservationController.class)
+@PropertySource("classpath:test.properties")
 public class ReservationControllerTests {
+
+	@Autowired
+	Environment env;
 
 	@MockBean
 	ReservationService reservationService;
@@ -42,22 +48,23 @@ public class ReservationControllerTests {
 		//
 		// Given
 		//
+		Integer defaultMonthsForAvailabilityRequest = env
+				.getProperty("reservation.default-months-for-availability-request", Integer.class);
 		LocalDate now = LocalDate.now();
-		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(1));
+		DateRangeVO dateRange = new DateRangeVO(now, now.plusMonths(defaultMonthsForAvailabilityRequest));
 		Mono<AvailabilityVO> value = Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 			{
 				add(dateRange);
 			}
 		}, dateRange));
-		when(reservationService.findAvailability(eq(dateRange))).thenReturn(value);
-		when(reservationService.findAvailability(eq(dateRange))).thenReturn(value);
+		when(reservationService.findAvailability(eq(new DateRangeVO(null, null)))).thenReturn(value);
 
 		//
 		// When / Then
 		//
 		webClient.get().uri("/reservations").exchange().expectStatus().isOk().expectBody(AvailabilityVO.class)
 				.isEqualTo(value.block());
-		verify(reservationService).findAvailability(dateRange);
+		verify(reservationService).findAvailability(new DateRangeVO(now, null));
 	}
 
 	@SuppressWarnings("serial")
@@ -95,23 +102,26 @@ public class ReservationControllerTests {
 		//
 		// Given
 		//
+		Integer defaultMonthsForAvailabilityRequest = env
+				.getProperty("reservation.default-months-for-availability-request", Integer.class);
 		LocalDate now = LocalDate.now();
 		LocalDate from = now.plusDays(10);
-		DateRangeVO dateRange = new DateRangeVO(from, from.plusMonths(1));
+		DateRangeVO dateRange = new DateRangeVO(from, from.plusMonths(defaultMonthsForAvailabilityRequest));
 		DateRangeVO actualAvailability = new DateRangeVO(now.plusDays(5), now.plusDays(15));
+		DateRangeVO actualDateRange = new DateRangeVO(from, null);
 		Mono<AvailabilityVO> value = Mono.<AvailabilityVO>just(new AvailabilityVO(new TreeSet<DateRangeVO>() {
 			{
 				add(actualAvailability);
 			}
 		}, dateRange));
-		when(reservationService.findAvailability(eq(dateRange))).thenReturn(value);
+		when(reservationService.findAvailability(eq(actualDateRange))).thenReturn(value);
 
 		//
 		// When / Then
 		//
 		webClient.get().uri(String.format("/reservations?from=%s", from)).exchange().expectStatus().isOk()
 				.expectBody(AvailabilityVO.class).isEqualTo(value.block());
-		verify(reservationService).findAvailability(dateRange);
+		verify(reservationService).findAvailability(actualDateRange);
 	}
 
 	@Test
@@ -146,7 +156,7 @@ public class ReservationControllerTests {
 		DateRangeVO dateRange = new DateRangeVO(now.plusDays(10), now.plusDays(12));
 		String bookingId = "someBookingId";
 		String email = "email";
-		String fullName = "fullname";
+		String fullName = "fullName";
 		Booking booking = new Booking(email, fullName, dateRange);
 		Booking booked = new Booking(bookingId, email, fullName, dateRange);
 		when(reservationService.makeReservation(eq(booking))).thenReturn(Mono.<Booking>just(booked));

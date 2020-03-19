@@ -6,7 +6,7 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>org.eclipse.jdt.core.javabuilder</name>
+			<name>org.scala-ide.sdt.core.scalabuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -24,5 +24,6 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
+		<nature>org.scala-ide.sdt.core.scalanature</nature>
 	</natures>
 </projectDescription>

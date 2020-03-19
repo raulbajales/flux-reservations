@@ -12,4 +12,9 @@
   "name": "reservation.max-days-ahead",
   "type": "java.lang.Integer",
   "description": "Max days ahead for a booking"
+},
+{
+  "name": "reservation.default-months-for-availability-request",
+  "type": "java.lang.Integer",
+  "description": "Default months to add to an availability request"
 }]}

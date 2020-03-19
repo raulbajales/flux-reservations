@@ -1,6 +1,8 @@
 package com.campsite.reservation.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -15,7 +17,11 @@ import com.campsite.reservation.service.ReservationService;
 import reactor.core.publisher.Mono;
 
 @Service
+@PropertySource("classpath:application.properties")
 public class ReservationServiceImpl implements ReservationService {
+
+	@Autowired
+	Environment env;
 
 	@Autowired
 	BookingService bookingService;
@@ -28,8 +34,10 @@ public class ReservationServiceImpl implements ReservationService {
 
 	public Mono<AvailabilityVO> findAvailability(DateRangeVO dateRange) {
 		Assert.notNull(dateRange, "dateRange needs to be set");
+		Integer defaultMonthsForAvailabilityRequest = env
+				.getProperty("reservation.default-months-for-availability-request", Integer.class);
 		return availabilityService.calculateAvailability(!dateRange.isOpen() ? dateRange
-				: new DateRangeVO(dateRange.getFrom(), dateRange.getFrom().plusMonths(1)));
+				: new DateRangeVO(dateRange.getFrom(), dateRange.getFrom().plusMonths(defaultMonthsForAvailabilityRequest)));
 	}
 
 	public Mono<Booking> makeReservation(Booking booking) {

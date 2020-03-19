@@ -13,7 +13,9 @@ buildscript {
 plugins {
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id "com.github.lkishalmi.gatling" version "3.3.0"
 	id 'java'
+	id 'scala'
 }
 
 group = 'com.campsite'
@@ -22,7 +24,13 @@ sourceCompatibility = '1.8'
 
 repositories {
 	jcenter()
-	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+	maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+}
+
+if (project.hasProperty('embeddedMongo')) {
+    dependencies {
+       compile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+    }
 }
 
 dependencies {
@@ -42,6 +50,8 @@ dependencies {
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly('io.gatling.highcharts:gatling-charts-highcharts:3.3.1')
+    testRuntimeOnly('io.gatling:gatling-core:3.3.1')
 }
 
 test {

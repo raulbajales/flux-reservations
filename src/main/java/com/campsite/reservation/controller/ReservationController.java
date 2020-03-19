@@ -38,10 +38,6 @@ public class ReservationController {
 	public Mono<ResponseEntity<AvailabilityVO>> findAvailability(
 			@RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
 			@RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
-		if (from == null)
-			from = LocalDate.now();
-		if (to == null)
-			to = from.plusMonths(1);
 		LOG.info("findAvailability from: {}, to: {}", from, to);
 		return reservationService.findAvailability(new DateRangeVO(from, to))
 				.map(availability -> ResponseEntity.ok(availability));

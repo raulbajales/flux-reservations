@@ -16,3 +16,9 @@ gradle-app.setting
 bin/
 gradlew
 gradle/wrapper/gradle-wrapper.jar
+target/.history
+project/target/*
+.settings
+.eclipse-pmd
+.cache*
+target/*
