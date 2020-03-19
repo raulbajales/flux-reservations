@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
 			throw new IllegalArgumentException(
 					String.format("Cannot book for more than %d days, for %s", maxBookingDays, dateRange));
 		long daysAhead = ChronoUnit.DAYS.between(now, dateRange.getFrom());
-		if (!(daysAhead >= minDaysAhead && daysAhead <= maxDaysAhead))
+		if (!(daysAhead >= minDaysAhead && (maxDaysAhead == -1 || daysAhead <= maxDaysAhead)))
 			throw new IllegalArgumentException(
 					String.format("Minimum %d day(s) ahead of arrival and up to %d days in advance, for %s",
 							minDaysAhead, maxDaysAhead, dateRange));

@@ -103,7 +103,7 @@ class FullUserJourneySimulation extends Simulation {
         val from = tomorrow
         val to = tomorrow.plusDays(2)
         val newFrom = from.plusDays(1)
-        val newTo = to.plusDays(2)
+        val newTo = to.plusDays(1)
         session
             .set("from", from)
             .set("to", to)
