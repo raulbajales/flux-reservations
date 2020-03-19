@@ -58,6 +58,7 @@ $ curl http://localhost:8080/reservations?from=2020-09-01
 {"inThisDateRange":{"from":"2020-09-01","to":"2020-10-01"},"datesAvailable":[{"from":"2020-09-01","to":"2020-10-01"}]}
 ```
 * Make a reservation
+
 Note how the `Location` response header shows the actual location (id) for the created resource
 ```
 $ curl -v -d '{"email":"john.doe@email.com", "fullName":"John Doe", "dateRange":{"from": "2020-04-01", "to": "2020-04-03"}}' -H "Content-Type: application/json" -X POST http://localhost:8080/reservations
