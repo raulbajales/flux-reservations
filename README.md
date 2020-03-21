@@ -107,5 +107,8 @@ Some other built in endpoints available (via [Actuator](https://docs.spring.io/s
 * `http://localhost:8080/manage/metrics`
 * `http://localhost:8080/manage/threaddump`
 
+There is also a custom metric as an example:
+* `http://localhost:8080/manage/metrics/reservation.bookings-not-allowed`
+
 
 

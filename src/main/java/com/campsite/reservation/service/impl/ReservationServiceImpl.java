@@ -14,6 +14,8 @@ import com.campsite.reservation.service.AvailabilityService;
 import com.campsite.reservation.service.BookingService;
 import com.campsite.reservation.service.ReservationService;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -32,6 +34,12 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	BookingRepository bookingRepository;
 
+	Counter bookingsNotAllowedCounter;
+	
+	public ReservationServiceImpl(MeterRegistry meterRegistry) {
+		bookingsNotAllowedCounter = meterRegistry.counter("reservation.bookings-not-allowed");
+	}
+
 	public Mono<AvailabilityVO> findAvailability(DateRangeVO dateRange) {
 		Assert.notNull(dateRange, "dateRange needs to be set");
 		Integer defaultMonthsForAvailabilityRequest = env
@@ -45,8 +53,10 @@ public class ReservationServiceImpl implements ReservationService {
 		return bookingService.isBookingCreationAllowed(booking).flatMap(isAllowed -> {
 			if (isAllowed)
 				return bookingRepository.save(booking);
-			else
+			else {
+				bookingsNotAllowedCounter.increment();
 				throw new IllegalArgumentException("No availability");
+			}
 		});
 	}
 

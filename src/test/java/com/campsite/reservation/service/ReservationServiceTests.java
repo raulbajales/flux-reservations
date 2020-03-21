@@ -23,6 +23,8 @@ import com.campsite.reservation.model.DateRangeVO;
 import com.campsite.reservation.repository.BookingRepository;
 import com.campsite.reservation.service.impl.ReservationServiceImpl;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import reactor.core.publisher.Mono;
 
 @SpringBootTest
@@ -40,9 +42,12 @@ public class ReservationServiceTests {
 	@Mock
 	AvailabilityService availabilityService;
 
+	@Mock
+	MeterRegistry meterRegistry;
+
 	@InjectMocks
 	@Autowired
-	ReservationService service = new ReservationServiceImpl();
+	ReservationService service = new ReservationServiceImpl(new SimpleMeterRegistry());
 
 	Integer maxBookingDays;
 	Integer minDaysAhead;
@@ -55,8 +60,8 @@ public class ReservationServiceTests {
 		maxBookingDays = env.getProperty("reservation.max-booking-days", Integer.class);
 		minDaysAhead = env.getProperty("reservation.min-days-ahead", Integer.class);
 		maxDaysAhead = env.getProperty("reservation.max-days-ahead", Integer.class);
-		defaultMonthsForAvailabilityRequest = env
-				.getProperty("reservation.default-months-for-availability-request", Integer.class);
+		defaultMonthsForAvailabilityRequest = env.getProperty("reservation.default-months-for-availability-request",
+				Integer.class);
 	}
 
 	@Test
