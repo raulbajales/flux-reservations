@@ -47,7 +47,7 @@ $ brew services start mongodb-community
 ```
 * Start the server
 ```
-$ gradle runBoot
+$ gradle clean bootRun
 ```
 ### Some REST calls using CURL
 * Check availability
