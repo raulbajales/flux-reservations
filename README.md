@@ -5,7 +5,7 @@
 * [REST API](https://en.wikipedia.org/wiki/Representational_state_transfer) built using [WebFlux](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html)
 * [Reactive programming](https://en.wikipedia.org/wiki/Reactive_programming) approach
 * [Gradle](https://gradle.org) managed build
-* [MongoDB](https://www.mongodb.com) as storage
+* [MongoDB](https://www.mongodb.com) as storage, using [reactive lib](https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.reactive.repositories)
 * [JUnit 5](https://junit.org/junit5/) / [Mockito](https://github.com/mockito/mockito) for unit tests
 * [Embedded Mongo](https://github.com/flapdoodle-oss/de.flapdoodle.embed.mongo) for [integration tests](https://martinfowler.com/bliki/IntegrationTest.html)
 * [Gatling](https://gatling.io) for [performance tests](https://en.wikipedia.org/wiki/Software_performance_testing) written in [Scala](https://www.scala-lang.org)
