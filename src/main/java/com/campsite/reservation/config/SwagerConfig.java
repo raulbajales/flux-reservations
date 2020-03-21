@@ -21,8 +21,9 @@ public class SwagerConfig {
       return new Docket(DocumentationType.SWAGGER_2)
               .select()
               .apis(RequestHandlerSelectors.basePackage("com.campsite.reservation.controller"))
-              .paths(PathSelectors.ant("/reservations/*"))
-              .build()
+              .paths(PathSelectors.any())
+              .build()              
+              .host("reservations.apidoc")
               .apiInfo(new ApiInfo(
             	      "Flux Reservations",
             	      "Demo REST API - Make Campsite Reservations",

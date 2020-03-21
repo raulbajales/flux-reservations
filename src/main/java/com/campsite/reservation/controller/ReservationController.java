@@ -39,7 +39,7 @@ public class ReservationController {
 	ReservationService reservationService;
 
 	@ApiOperation(value = "Checks availability for a given date range. By default 'from' is set to today, 'to' to today + 1 month", response = AvailabilityVO.class)
-	@GetMapping("/")
+	@GetMapping("")
 	public Mono<ResponseEntity<AvailabilityVO>> findAvailability(
 			@ApiParam(value = "From what date to check for availability?, in 'yyyy-MM-dd' format.", required = false) @RequestParam(value = "from", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate from,
 			@ApiParam(value = "To what date to check for availability?, in 'yyyy-MM-dd' format.", required = false) @RequestParam(value = "to", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate to) {
@@ -49,7 +49,7 @@ public class ReservationController {
 	}
 
 	@ApiOperation(value = "Makes a reservation. Reservations should be done minimum 1 day ahead of arrival and up to 30 days in advance, for up to 3 days.")
-	@PostMapping("/")
+	@PostMapping("")
 	public Mono<ResponseEntity<Void>> makeReservation(@RequestBody Booking booking) {
 		LOG.info("makeReservation booking: {}", booking);
 		return reservationService.makeReservation(booking).map(booked -> ResponseEntity

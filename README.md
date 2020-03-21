@@ -96,19 +96,19 @@ $ open http://localhost:8080/swagger-ui.html
 ```
 ### Monitoring
 ```
-$ open http://localhost:8080/manage/health
+$ open http://localhost:8081/manage/health
 ```
-Some other built in endpoints available (via [Actuator](https://docs.spring.io/spring-boot/docs/2.0.x/actuator-api/html/)):
-* `http://localhost:8080/manage/env`
-* `http://localhost:8080/manage/health`
-* `http://localhost:8080/manage/beans`
-* `http://localhost:8080/manage/heapdump`
-* `http://localhost:8080/manage/mappings`
-* `http://localhost:8080/manage/metrics`
-* `http://localhost:8080/manage/threaddump`
 
-There is also a custom metric as an example:
-* `http://localhost:8080/manage/metrics/reservation.bookings-not-allowed`
+There is a custom metric as an example:
+* `http://localhost:8081/manage/metrics/reservation.bookings-not-allowed`
 
+Some other built in endpoints are available (via [Actuator](https://docs.spring.io/spring-boot/docs/2.0.x/actuator-api/html/)):
+* `http://localhost:8081/manage/env`
+* `http://localhost:8081/manage/health`
+* `http://localhost:8081/manage/beans`
+* `http://localhost:8081/manage/heapdump`
+* `http://localhost:8081/manage/mappings`
+* `http://localhost:8081/manage/metrics`
+* `http://localhost:8081/manage/threaddump`
 
 
