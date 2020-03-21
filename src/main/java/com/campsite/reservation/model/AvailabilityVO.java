@@ -5,8 +5,16 @@ import java.util.TreeSet;
 
 import org.springframework.util.Assert;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Response for an availability request. Shows all the available date ranges for the requested date range.")
 public class AvailabilityVO {
+	
+	@ApiModelProperty(notes = "Date range for the requested availability.")
 	private DateRangeVO inThisDateRange;
+
+	@ApiModelProperty(notes = "Set of date ranges available, sorted by 'from' date.")
 	private TreeSet<DateRangeVO> datesAvailable;
 
 	public AvailabilityVO() {

@@ -9,10 +9,17 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Defines a date range by setting a 'from' and a 'to' dates.")
 public class DateRangeVO implements Comparable<DateRangeVO> {
 
+	@ApiModelProperty(notes = "From date, in 'yyyy-MM-dd' format.")
 	private LocalDate from;
-	private LocalDate to;
+
+	@ApiModelProperty(notes = "To date, in 'yyyy-MM-dd' format.")
+    private LocalDate to;
 
 	public DateRangeVO() {
 		this(null, null);
