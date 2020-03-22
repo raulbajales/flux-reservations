@@ -9,6 +9,7 @@ import io.gatling.http.request.builder.HttpRequestBuilder.toActionBuilder
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import java.util.concurrent.atomic.AtomicInteger
+import scala.concurrent.duration._
 
 class FullUserJourneySimulation extends Simulation {
 
@@ -118,5 +119,11 @@ class FullUserJourneySimulation extends Simulation {
         CheckReservationIsCancelled.run
     )
 
-  setUp(scn.inject(atOnceUsers(userCount)).protocols(httpProtocol))
+  //  
+  // Handle up to 200 users per 5 seconds
+  //
+  val secs = (userCount.toInt / 200) * 5
+    
+  setUp(scn.inject(rampUsers(userCount) during ((if (secs < 5) 5 else secs) seconds)).protocols(httpProtocol))
+
 }
