@@ -233,7 +233,7 @@ public class ReservationControllerTests {
 		// Given
 		//
 		String bookingId = "someBookingId";
-		when(reservationService.cancelReservation(eq(bookingId))).thenReturn(Mono.<Void>empty());
+		when(reservationService.cancelReservation(eq(bookingId))).thenReturn(Mono.<Boolean>empty());
 
 		//
 		// When / Then

@@ -24,7 +24,7 @@ public interface BookingRepositoryCustom {
 	/**
 	 * Need a custom implementation for deleteById to eventually throw BookingNotFoundException.
 	 */
-	Mono<Void> customDeleteById(String bookingId);
+	Mono<Boolean> customDeleteById(String bookingId);
 
 	/**
 	 * Need a custom implementation findById to eventually throw BookingNotFoundException.

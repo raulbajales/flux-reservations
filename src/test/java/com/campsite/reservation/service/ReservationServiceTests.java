@@ -240,7 +240,7 @@ public class ReservationServiceTests {
 		// Given
 		//
 		String bookingId = "someBookingId";
-		when(bookingRepository.customDeleteById(eq(bookingId))).thenReturn(Mono.<Void>empty());
+		when(bookingRepository.customDeleteById(eq(bookingId))).thenReturn(Mono.<Boolean>empty());
 
 		//
 		// When

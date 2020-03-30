@@ -16,5 +16,5 @@ public interface ReservationService {
 
 	Mono<Booking> getReservationInfo(String bookingId);
 
-	Mono<Void> cancelReservation(String bookingId);
+	Mono<Boolean> cancelReservation(String bookingId);
 }

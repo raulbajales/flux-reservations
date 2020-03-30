@@ -79,7 +79,7 @@ public class ReservationServiceImpl implements ReservationService {
 		return bookingRepository.customFindById(bookingId);
 	}
 
-	public Mono<Void> cancelReservation(String bookingId) {
+	public Mono<Boolean> cancelReservation(String bookingId) {
 		Assert.notNull(bookingId, "bookingId needs to be set");
 		return bookingRepository.customDeleteById(bookingId);
 	}
