@@ -24,7 +24,7 @@ class FullUserJourneySimulation extends Simulation {
 
   object FindAvailability {
     val run = exec(http("FindAvailability")
-          .get("/reservations")
+          .get("/reservations/find-availability")
               .queryParam("from", "${from}")
               .queryParam("to", "${to}")
               .check(status is 200)

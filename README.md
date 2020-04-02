@@ -24,7 +24,7 @@
 ## Run unit and integration tests
 These tests will use EmbeddedMongo by default.
 ```
-$ gradle tests
+$ gradle test
 $ open build/reports/tests/test/index.html
 ```
 
@@ -37,7 +37,7 @@ $ gradle clean bootRun -PembeddedMongo --args='--reservation.max-days-ahead=-1'
 ```
 * In Terminal 2 run the actual performance test:
 ```
-$ gradle gatlingRun -DuserCount=100 
+$ gradle gatlingRun -DuserCount=1000 
 ```
 
 ## Run the server
@@ -52,9 +52,9 @@ $ gradle clean bootRun
 ### Some REST calls using CURL
 * Check availability
 ```
-$ curl http://localhost:8080/reservations
+$ curl http://localhost:8080/reservations/find-availability
 {"inThisDateRange":{"from":"2020-03-19","to":"2020-04-19"},"datesAvailable":[{"from":"2020-03-19","to":"2020-04-19"}]}
-$ curl http://localhost:8080/reservations?from=2020-09-01
+$ curl http://localhost:8080/reservations/find-availability?from=2020-09-01
 {"inThisDateRange":{"from":"2020-09-01","to":"2020-10-01"},"datesAvailable":[{"from":"2020-09-01","to":"2020-10-01"}]}
 ```
 * Make a reservation

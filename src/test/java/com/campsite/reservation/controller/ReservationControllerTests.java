@@ -62,7 +62,7 @@ public class ReservationControllerTests {
 		//
 		// When / Then
 		//
-		webClient.get().uri("/reservations").exchange().expectStatus().isOk().expectBody(AvailabilityVO.class)
+		webClient.get().uri("/reservations/find-availability").exchange().expectStatus().isOk().expectBody(AvailabilityVO.class)
 				.isEqualTo(value.block());
 		verify(reservationService).findAvailability(new DateRangeVO(now, null));
 	}
@@ -90,7 +90,7 @@ public class ReservationControllerTests {
 		//
 		// When / Then
 		//
-		webClient.get().uri(String.format("/reservations?from=%s&to=%s", from, to)).exchange().expectStatus().isOk()
+		webClient.get().uri(String.format("/reservations/find-availability?from=%s&to=%s", from, to)).exchange().expectStatus().isOk()
 				.expectBody(AvailabilityVO.class).isEqualTo(value.block());
 		verify(reservationService).findAvailability(dateRange);
 	}
@@ -119,7 +119,7 @@ public class ReservationControllerTests {
 		//
 		// When / Then
 		//
-		webClient.get().uri(String.format("/reservations?from=%s", from)).exchange().expectStatus().isOk()
+		webClient.get().uri(String.format("/reservations/find-availability?from=%s", from)).exchange().expectStatus().isOk()
 				.expectBody(AvailabilityVO.class).isEqualTo(value.block());
 		verify(reservationService).findAvailability(actualDateRange);
 	}
@@ -141,7 +141,7 @@ public class ReservationControllerTests {
 		//
 		// When / Then
 		//
-		webClient.get().uri(String.format("/reservations?from=%s&to=%s", from, to)).exchange().expectStatus().isOk()
+		webClient.get().uri(String.format("/reservations/find-availability?from=%s&to=%s", from, to)).exchange().expectStatus().isOk()
 				.expectBody(AvailabilityVO.class).isEqualTo(value.block());
 		verify(reservationService).findAvailability(dateRange);
 	}
